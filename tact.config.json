@@ -1,10 +1,12 @@
 {
-    "projects": [{
-        "name": "SampleJetton",
-        "path": "./sources/contract.tact",
-        "output": "./sources/output",
-        "options":{
-            
+    "projects": [
+        {
+            "name": "dexRouter",
+            "path": "./sources/dexRouter.tact",
+            "output": "./sources/output",
+            "options": {
+                "debug": true
+            }
         }
-    }]
+    ]
 }

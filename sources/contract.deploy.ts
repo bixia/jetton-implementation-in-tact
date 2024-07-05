@@ -16,7 +16,7 @@ dotenv.config();
         endpoint: "https://mainnet-v4.tonhubapi.com",
     });
 
-    let mnemonics = (process.env.mnemonics_2 || "").toString(); // 🔴 Change to your own, by creating .env file!
+    let mnemonics = (process.env.mnemonics || "").toString(); // 🔴 Change to your own, by creating .env file!
     let keyPair = await mnemonicToPrivateKey(mnemonics.split(" "));
     let secretKey = keyPair.secretKey;
     let workchain = 0; //we are working in basechain.

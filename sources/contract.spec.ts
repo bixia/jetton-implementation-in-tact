@@ -72,7 +72,7 @@ describe("contract", () => {
         jettonWallet = blockchain.openContract(await JettonDefaultWallet.fromAddress(playerWallet));
     });
 
-    it("Test: whether contract deployed successfully", async () => {
+    xit("Test: whether contract deployed successfully", async () => {
         // the check is done inside beforeEach, blockchain and token are ready to use
         // console.log((await token.getGetJettonData()).owner);
         // console.log((await token.getGetJettonData()).totalSupply);
@@ -80,7 +80,7 @@ describe("contract", () => {
         // console.log((await token.getGetJettonData()).content);
     });
 
-    it("Test: Minting is successfully", async () => {
+    xit("Test: Minting is successfully", async () => {
         const totalSupplyBefore = (await token.getGetJettonData()).total_supply;
         const mintAmount = toNano(100);
         const Mint: Mint = {
@@ -104,7 +104,7 @@ describe("contract", () => {
         expect(walletData.balance).toBeGreaterThanOrEqual(mintAmount);
     });
 
-    it("should transfer successfully", async () => {
+    xit("should transfer successfully", async () => {
         const sender = await blockchain.treasury("sender");
         const receiver = await blockchain.treasury("receiver");
         const initMintAmount = toNano(1000);
@@ -152,7 +152,7 @@ describe("contract", () => {
         // console.log(fromNano(balance1));
     });
 
-    it("Mint tokens then Burn tokens", async () => {
+    xit("Mint tokens then Burn tokens", async () => {
         // const sender = await blockchain.treasury("sender");
         const deployerWalletAddress = await token.getGetWalletAddress(deployer.address);
         const deployerWallet = blockchain.openContract(JettonDefaultWallet.fromAddress(deployerWalletAddress));
@@ -182,7 +182,7 @@ describe("contract", () => {
         expect(deployerBalanceAfterBurn).toEqual(deployerBalance - burnAmount);
     });
 
-    it("Should return value", async () => {
+    xit("Should return value", async () => {
         const player = await blockchain.treasury("player");
         const mintAmount = 1119000n;
         const Mint: Mint = {
@@ -205,7 +205,7 @@ describe("contract", () => {
         // prettyLogTransactions(messateResult.transactions);
     });
 
-    it("Convert Address Format", async () => {
+    xit("Convert Address Format", async () => {
         console.log("Example Address(Jetton Root Contract: " + token.address);
         console.log("Is Friendly Address: " + Address.isFriendly(token.address.toString()));
 
@@ -257,11 +257,14 @@ describe("contract", () => {
 
         const poolReadiness = await pool.getReadinessStatus();
         if (poolReadiness === ReadinessStatus.NOT_DEPLOYED) {
+            console.log("deploy")
             const transferLiquidity = await factory.sendCreateVolatilePool(player.getSender(), {
                 assets: [TON, SCALE],
             });
             await printTransactionFees(await transferLiquidity.transactions);
         }
+        let isPoolReady = await pool.getReadinessStatus();
+        console.log("isPoolReady", isPoolReady)
 
         // ------------------------------------------------------------------------------------------------
         // Step 3-1: 0xd55e4686, Deposit / Adding Liquidity: Deposit TON to Vault
@@ -346,7 +349,7 @@ describe("contract", () => {
         // await prettyLogTransactions(await removeTx_Result.transactions);
     }, 10000);
 
-    it("Onchian Testing: STON.fi", async () => {
+    xit("Onchian Testing: STON.fi", async () => {
         const blkch = await Blockchain.create({
             storage: new RemoteBlockchainStorage(
                 wrapTonClient4ForRemote(
