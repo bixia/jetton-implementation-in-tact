@@ -29,6 +29,7 @@ message ChangeFwdFee {
 const ERR_PARSE_STONFIJETTONINFO: Int = 200400;
 
 contract DexRouter with Deployable, Resumable, OwnableTransferable {
+    seq: Int;
     owner: Address;
     stopped: Bool;
     stonfi_router: Address;
@@ -40,28 +41,29 @@ contract DexRouter with Deployable, Resumable, OwnableTransferable {
     const STONFI_TRANSFER_BOUNCE_LOCKED: Int = 0xa0dbdcb; //transfer_bounce_locked
     const STONFI_TRANSFER_BOUNCE_INVALID_REQUEST: Int = 0x19727ea8; //transfer_bounce_invalid_request
 
-    init(owner: Address){
+    init(owner: Address, seq: Int){
+        self.seq = seq;
         self.owner = owner;
         self.stopped = false;
         self.stonfi_router = address("EQB3ncyBUTjZUA5EnFKR5_EnOMI9V1tTEAAPaiU71gc4TiUt");
         self.stonfi_txorigin = newAddress(0, 0);
         // https://github.com/crazybee69/TonDcaBot/blob/main/contracts/ton_dca_wallet.tact#L257
-        self.stonfi_fwd_ton_amount = ton("0.265");
+        self.stonfi_fwd_ton_amount = ton("0.0265");
     }
 
     receive(msg: TokenNotification){
-        require(msg.amount > ton("1"), "at least 1 ton");
+        // require(msg.amount > ton("1"), "at least 1 ton");
         self.requireNotStopped();
         let user: Address = msg.from;
         let payload: Slice = msg.forward_payload;
-        let op: Int = payload.preloadUint(32);
+        let op: Int = payload.loadUint(32);
         if (self.stonfi_txorigin != newAddress(0, 0)) {
             self.handleRefundJetton(msg, op);
             self.stonfi_txorigin = newAddress(0, 0);
         }
         if (op == self.STONFI_JETTON) {
             let info: StonFiJettonInfo = StonFiJettonInfo{
-                op: payload.loadUint(32),
+                op: op,
                 tokenA: payload.loadAddress(),
                 receiver: payload.loadAddress(),
                 tokenB: payload.loadAddress(),
@@ -135,5 +137,21 @@ contract DexRouter with Deployable, Resumable, OwnableTransferable {
     receive(msg: ChangeFwdFee){
         self.requireOwner();
         self.stonfi_fwd_ton_amount = msg.stonfi_fwd;
+    }
+
+    get fun getStonfiTxorigin(): Address {
+        return self.stonfi_txorigin;
+    }
+
+    get fun getStonfiFwdAmount(): Int {
+        return self.stonfi_fwd_ton_amount;
+    }
+
+    get fun getStonfiRouter(): Address {
+        return self.stonfi_router;
+    }
+
+    get fun getSeq(): Int {
+        return self.seq;
     }
 }

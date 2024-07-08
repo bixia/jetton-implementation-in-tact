@@ -20,7 +20,7 @@ dotenv.config();
     let secretKey = keyPair.secretKey;
     let workchain = 0; //we are working in basechain.
     let deployer_wallet = WalletContractV4.create({ workchain, publicKey: keyPair.publicKey });
-    console.log(deployer_wallet.address);
+    console.log("deployer", deployer_wallet.address);
 
     let deployer_wallet_contract = client4.open(deployer_wallet);
 
@@ -29,9 +29,7 @@ dotenv.config();
     // NOTICE: the parameters inside the init functions were the input for the contract address
     // which means any changes will change the smart contract address as well
 
-    let init = await DexRouter.init(deployer_wallet_contract.address);
-    let dexRouterAddr = contractAddress(workchain, init);
-    let deployAmount = toNano("0.15");
+
 
 
     // send a message on new address contract to deploy it
@@ -39,6 +37,10 @@ dotenv.config();
     console.log("🛠️Preparing new outgoing massage from deployment wallet. \n" + deployer_wallet_contract.address);
     console.log("Seqno: ", seqno + "\n");
     printSeparator();
+
+    let init = await DexRouter.init(deployer_wallet_contract.address, BigInt(seqno));
+    let dexRouterAddr = contractAddress(workchain, init);
+    let deployAmount = toNano("0.05");
 
     // Get deployment wallet balance
     let balance: bigint = await deployer_wallet_contract.getBalance();
